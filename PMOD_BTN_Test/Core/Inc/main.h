@@ -62,6 +62,7 @@ void Error_Handler(void);
 #define VCP_TX_GPIO_Port GPIOA
 #define PMOD_A_Pin GPIO_PIN_0
 #define PMOD_A_GPIO_Port GPIOB
+#define PMOD_A_EXTI_IRQn EXTI0_1_IRQn
 #define SWDIO_Pin GPIO_PIN_13
 #define SWDIO_GPIO_Port GPIOA
 #define SWCLK_Pin GPIO_PIN_14
@@ -70,8 +71,10 @@ void Error_Handler(void);
 #define VCP_RX_GPIO_Port GPIOA
 #define PMOD_BTN_Pin GPIO_PIN_6
 #define PMOD_BTN_GPIO_Port GPIOB
+#define PMOD_BTN_EXTI_IRQn EXTI4_15_IRQn
 #define PMOD_B_Pin GPIO_PIN_7
 #define PMOD_B_GPIO_Port GPIOB
+#define PMOD_B_EXTI_IRQn EXTI4_15_IRQn
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */
