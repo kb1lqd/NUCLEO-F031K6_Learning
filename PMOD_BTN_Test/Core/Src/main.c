@@ -19,11 +19,14 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "tim.h"
 #include "usart.h"
 #include "gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+
+#include <stdio.h>
 
 /* USER CODE END Includes */
 
@@ -65,6 +68,9 @@ void SystemClock_Config(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
+	char uart_buf[50];
+	int uart_buf_len;
+	uint16_t timer_val;
 
   /* USER CODE END 1 */
 
@@ -87,7 +93,15 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_USART1_UART_Init();
+  MX_TIM16_Init();
   /* USER CODE BEGIN 2 */
+
+  //UART
+  uart_buf_len = sprintf(uart_buf, "Timer test.\r\n");
+  HAL_UART_Transmit(&huart1, (uint8_t *)uart_buf, uart_buf_len, 100);
+
+  //Start Timer
+  HAL_TIM_Base_Start(&htim16);
 
   /* USER CODE END 2 */
 
@@ -95,6 +109,19 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+	  //Get current time cnt
+	  timer_val = __HAL_TIM_GET_COUNTER(&htim16);
+
+	  //Wait
+	  HAL_Delay(20);
+
+	  //Get Time Elapsed
+	  timer_val = __HAL_TIM_GET_COUNTER(&htim16) - timer_val;
+
+	  //Send UART
+	  uart_buf_len = sprintf(uart_buf, "Elapsed Time: %u us\r\n", timer_val);
+	  HAL_UART_Transmit(&huart1, (uint8_t *)uart_buf, uart_buf_len, 100);
+
 
     /* USER CODE END WHILE */
 

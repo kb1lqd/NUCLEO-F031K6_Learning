@@ -18,3 +18,7 @@
 
 * GPIO Interrupt: https://www.youtube.com/watch?v=qd_tevhJ2eE
 * Interrupt: https://www.2ofanerd.com/en/2020/06/17/easy-interrupt-handling-on-stm32-the-quick-tutorial/
+* TIMER Encoder Mode: https://deepbluembedded.com/stm32-timer-encoder-mode-stm32-rotary-encoder-interfacing/
+* SPLC780D LCD CHAR Library: https://github.com/coocox/cox/blob/master/CoX/Driver/LCD_Character/SPLC780D/Character_LCD_SPLC780D_Driver/lib/splc780d.c
+* Debounce Timer: http://www.emcu.it/STM32/STM32Discovery-Debounce/STM32Discovery-InputWithDebounce_Output_UART_SPI_SysTick.html
+* Timer Interrupt: https://www.youtube.com/watch?v=VfbW6nfG4kw
