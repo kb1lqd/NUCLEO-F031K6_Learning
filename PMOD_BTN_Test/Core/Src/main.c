@@ -119,7 +119,8 @@ int main(void)
 	  timer_val = __HAL_TIM_GET_COUNTER(&htim16) - timer_val;
 
 	  //Send UART
-	  uart_buf_len = sprintf(uart_buf, "Elapsed Time: %u us\r\n", timer_val);
+	  //uart_buf_len = sprintf(uart_buf, "Elapsed Time: %u us\r\n", timer_val);
+	  uart_buf_len = sprintf(uart_buf, "COUNT: %d\r\n", rotary_val);
 	  HAL_UART_Transmit(&huart1, (uint8_t *)uart_buf, uart_buf_len, 100);
 
 

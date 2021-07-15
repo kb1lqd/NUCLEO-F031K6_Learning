@@ -30,7 +30,7 @@
 /*----------------------------------------------------------------------------*/
 /* USER CODE BEGIN 1 */
 
-volatile short rotary_val=0;
+volatile int rotary_val=0;
 
 /* USER CODE END 1 */
 

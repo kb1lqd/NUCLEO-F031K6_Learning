@@ -40,7 +40,7 @@ void MX_GPIO_Init(void);
 /* USER CODE BEGIN Prototypes */
 
 volatile _Bool a,b;
-extern volatile short rotary_val;
+extern volatile int rotary_val;
 
 /* USER CODE END Prototypes */
 
