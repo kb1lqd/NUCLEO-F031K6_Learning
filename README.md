@@ -14,6 +14,22 @@
 * Implement a proper detection of CW and CCW detection that is reliable and not based on poorly defined detection code inside the interrupt.
   * I may want to pursue a simple state machine here.
 
+
+## 7/15/21
+
+* Implemented basic interrupt GPIO CW/CCW detection
+  * It is not debounced and is glitchy
+* Implemented UART text output
+* Implemented basic us counter with TIM16
+* Transmits current count every 20us via TIMER
+
+### For Next Time
+
+* Implement basic switch debounce using the timer to clean up rotary detection
+* I could implement rotary detection via the internal hardware support but this requires specific pins
+* I could implement rotary control of a PWM'd LED for fun
+* wire up LCD
+
 # References
 
 * GPIO Interrupt: https://www.youtube.com/watch?v=qd_tevhJ2eE
