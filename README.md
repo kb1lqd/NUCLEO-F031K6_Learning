@@ -17,3 +17,4 @@
 # References
 
 * GPIO Interrupt: https://www.youtube.com/watch?v=qd_tevhJ2eE
+* Interrupt: https://www.2ofanerd.com/en/2020/06/17/easy-interrupt-handling-on-stm32-the-quick-tutorial/

@@ -30,6 +30,8 @@
 /*----------------------------------------------------------------------------*/
 /* USER CODE BEGIN 1 */
 
+volatile short rotary_val=0;
+
 /* USER CODE END 1 */
 
 /** Configure pins as
@@ -68,55 +70,54 @@ void MX_GPIO_Init(void)
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
-	static bool pmod_a=0;
-	static bool pmod_b=0;
-	bool pmod_turn_cw=0;
-	bool pmod_turn_ccw=0;
-	bool pmod_btn=0;
 
+	/*
+	 *
+	 * Sense Rotary Encoder Direction
+	 *
+	 */
 	if(GPIO_Pin == PMOD_BTN_Pin)
 	{
 		__NOP(); // Push-Button pressed
-		pmod_btn=1;
 	}
 	else if(GPIO_Pin == PMOD_A_Pin)
 	{
 		__NOP(); // A signal detected
-		pmod_a=1;
 
-		//Determine direction
-		if(pmod_b==1)
+		//Sense direction
+		if(b==true)
 		{
-			//CW
-			pmod_turn_cw = 1;
-
-			//RESET
-			pmod_a=0;
-			pmod_b=0;
-			pmod_turn_cw = 0;
-			pmod_turn_ccw = 0;
+			rotary_val++;
+			a = false;
+			b = false;
 		}
+		else
+		{
+			a = true;
+		}
+
+
+
 	}
 	else if(GPIO_Pin == PMOD_B_Pin)
 	{
 		__NOP(); // B signal detected
-		pmod_b=1;
 
-		//Determine direction
-		if(pmod_a==1)
+		//Sense direction
+		if(a==true)
 		{
-			//CCW
-			pmod_turn_ccw = 1;
-
-			//RESET
-			pmod_a=0;
-			pmod_b=0;
-			pmod_turn_cw = 0;
-			pmod_turn_ccw = 0;
+			rotary_val--;
+			a = false;
+			b = false;
+		}
+		else
+		{
+			b = true;
 		}
 	}
 
-	//Determine direction
+	__NOP();
+	// End Sense Rotary Encoder Direction
 
 }
 
