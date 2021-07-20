@@ -27,6 +27,7 @@
 /* USER CODE BEGIN Includes */
 
 #include <stdio.h>
+#include <LiquidCrystal.h>
 
 /* USER CODE END Includes */
 
@@ -81,6 +82,21 @@ int main(void)
 
   /* USER CODE BEGIN Init */
 
+  /*
+  * LCD RS pin to PA0
+  * LCD R/W pin to PA12
+  * LCD En pin to PA1
+  * LCD D4 pin to PA3
+  * LCD D5 pin to PA4
+  * LCD D6 pin to PA7
+  * LCD D7 pin to PA11
+  */
+  // initialize the library by associating any needed LCD interface pin
+  	LiquidCrystal(GPIOA, GPIO_PIN_0, GPIO_PIN_12, GPIO_PIN_1, GPIO_PIN_3, GPIO_PIN_4, GPIO_PIN_7, GPIO_PIN_11);
+  	print("Hello, World!");
+  	int i = 0;
+	char* str;
+	unsigned char testvar;
   /* USER CODE END Init */
 
   /* Configure the system clock */
@@ -122,6 +138,16 @@ int main(void)
 	  //uart_buf_len = sprintf(uart_buf, "Elapsed Time: %u us\r\n", timer_val);
 	  uart_buf_len = sprintf(uart_buf, "COUNT: %d\r\n", rotary_val);
 	  HAL_UART_Transmit(&huart1, (uint8_t *)uart_buf, uart_buf_len, 100);
+
+	  // set the cursor to column 0, line 1
+	  // (note: line 1 is the second row, since counting begins with 0):
+	  setCursor(0, 1);
+	  // print the number of seconds since reset:
+	  //sprintf(str, "%d", 10);
+	  //print(str);
+	  print((uint8_t *)testvar);
+	  HAL_Delay(100);
+	  testvar++;
 
 
     /* USER CODE END WHILE */
