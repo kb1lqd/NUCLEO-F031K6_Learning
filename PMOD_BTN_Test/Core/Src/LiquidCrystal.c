@@ -7,7 +7,8 @@
  *      Published to: Github (https://github.com/SayidHosseini/STM32LiquidCrystal)
  */
 
-#include "stm32f0xx_hal.h" // change this line accordingly
+//#include "stm32f0xx_hal.h" // change this line accordingly
+#include <gpio.h>
 #include "LiquidCrystal.h"
 #include <stdio.h>
 #include <string.h>

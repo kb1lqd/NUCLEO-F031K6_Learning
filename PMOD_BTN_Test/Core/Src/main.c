@@ -28,6 +28,7 @@
 
 #include <stdio.h>
 #include <LiquidCrystal.h>
+#include <stdlib.h>
 
 /* USER CODE END Includes */
 
@@ -97,12 +98,22 @@ int main(void)
   	int i = 0;
 	char* str;
 	unsigned char testvar;
+	char testbuf[32];
+	char teststr[32];
+	unsigned char teststrlen;
+
+	// Timing
+	unsigned int timer_start;
+	unsigned int timer_cnt = 0;
+	char timerbuf[8];
+
   /* USER CODE END Init */
 
   /* Configure the system clock */
   SystemClock_Config();
 
   /* USER CODE BEGIN SysInit */
+  timer_start = __HAL_TIM_GET_COUNTER(&htim14); // Get initial timer value
 
   /* USER CODE END SysInit */
 
@@ -110,6 +121,7 @@ int main(void)
   MX_GPIO_Init();
   MX_USART1_UART_Init();
   MX_TIM16_Init();
+  MX_TIM14_Init();
   /* USER CODE BEGIN 2 */
 
   //UART
@@ -126,13 +138,13 @@ int main(void)
   while (1)
   {
 	  //Get current time cnt
-	  timer_val = __HAL_TIM_GET_COUNTER(&htim16);
+	  timer_val = __HAL_TIM_GET_COUNTER(&htim14);
 
 	  //Wait
 	  HAL_Delay(20);
 
 	  //Get Time Elapsed
-	  timer_val = __HAL_TIM_GET_COUNTER(&htim16) - timer_val;
+	  timer_val = __HAL_TIM_GET_COUNTER(&htim14) - timer_val;
 
 	  //Send UART
 	  //uart_buf_len = sprintf(uart_buf, "Elapsed Time: %u us\r\n", timer_val);
@@ -145,7 +157,38 @@ int main(void)
 	  // print the number of seconds since reset:
 	  //sprintf(str, "%d", 10);
 	  //print(str);
-	  print((uint8_t *)testvar);
+
+	  /////
+	  // Print rotary value
+	  // Note: this has issues with the length printing undesired old string array elements.
+	  /////
+
+	  /*
+
+	  teststrlen = sprintf(testbuf, "Value is: %d", rotary_val);
+
+	  for(i=0; i<teststrlen; i++)
+	  {
+		  teststr[i] = testbuf[i];
+	  }
+	  teststr[teststrlen] = '\0';
+
+	  //print("Value: ");
+	  //itoa(rotary_val,testbuf,10);
+	  print(teststr);
+
+	  */
+
+	  // Create 1 second timer with 1KHz timer peripheral
+	  if(__HAL_TIM_GET_COUNTER(&htim14) - timer_start >= 1000)
+	  {
+		  print("Seconds: ");
+		  sprintf(timerbuf, "%d", 10);
+		  print(timerbuf);
+		  timer_start = __HAL_TIM_GET_COUNTER(&htim14);
+	  }
+
+
 	  HAL_Delay(100);
 	  testvar++;
 
