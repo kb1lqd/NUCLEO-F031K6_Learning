@@ -101,8 +101,14 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
   /* Timer 2
-   * - Set to 1Mhz
+   * - Set to 1Mhz (1cnt/us)
    * - 32 bit count to 4294967295 in mode UP
+   */
+
+  /*
+   * Timer 16
+   * - Set to 10KHz (1cnt/100us)
+   * - 16 bit count
    */
 
 
@@ -111,7 +117,7 @@ int main(void)
   HAL_UART_Transmit(&huart1, (uint8_t *)uart_buf, uart_buf_len, 100);
 
   //Start the timer
-  HAL_TIM_Base_Start(&htim2);
+  HAL_TIM_Base_Start(&htim16);
 
   /* USER CODE END 2 */
 
@@ -124,17 +130,17 @@ int main(void)
     /* USER CODE BEGIN 3 */
 
 	  //Get start time
-	  timer_val = __HAL_TIM_GET_COUNTER(&htim2);
+	  timer_val = __HAL_TIM_GET_COUNTER(&htim16);
 
 	  //Program execute
-	  //HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_3);
-	  HAL_Delay(25);
+	  HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_3);
+	  HAL_Delay(100);
 
 	  //Elapsed Time
-	  timer_val = __HAL_TIM_GET_COUNTER(&htim2) - timer_val;
+	  timer_val = __HAL_TIM_GET_COUNTER(&htim16) - timer_val;
 
 	  //Print elapsed time to UART
-	  uart_buf_len = sprintf(uart_buf, "Duration: %u us\r\n", timer_val);
+	  uart_buf_len = sprintf(uart_buf, "Duration: %u ms\r\n", timer_val/10); // /10 for ms
       HAL_UART_Transmit(&huart1, (uint8_t *)uart_buf, uart_buf_len, 100);
 
 
@@ -245,7 +251,7 @@ static void MX_TIM16_Init(void)
 
   /* USER CODE END TIM16_Init 1 */
   htim16.Instance = TIM16;
-  htim16.Init.Prescaler = 8-1;
+  htim16.Init.Prescaler = 800-1;
   htim16.Init.CounterMode = TIM_COUNTERMODE_UP;
   htim16.Init.Period = 65535;
   htim16.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
