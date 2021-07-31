@@ -113,7 +113,7 @@ int main(void)
 
 
   // Say hello
-  uart_buf_len = sprintf(uart_buf, "Timer test program started!\r\n");
+  uart_buf_len = sprintf(uart_buf, "Timer blinky program started!\r\n");
   HAL_UART_Transmit(&huart1, (uint8_t *)uart_buf, uart_buf_len, 100);
 
   //Start the timer
@@ -129,22 +129,17 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
 
-	  //Get start time
-	  timer_val = __HAL_TIM_GET_COUNTER(&htim16);
+	  if(__HAL_TIM_GET_COUNTER(&htim16) - timer_val >= 500)
+	  {
+		  //Toggle  LED
+		  HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_3);
 
-	  //Program execute
-	  HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_3);
-	  HAL_Delay(100);
+		  //Print elapsed time to UART
+		  uart_buf_len = sprintf(uart_buf, "Duration: %u ms\r\n", (__HAL_TIM_GET_COUNTER(&htim16) - timer_val)/10); // /10 for ms
+		  HAL_UART_Transmit(&huart1, (uint8_t *)uart_buf, uart_buf_len, 100);
 
-	  //Elapsed Time
-	  timer_val = __HAL_TIM_GET_COUNTER(&htim16) - timer_val;
-
-	  //Print elapsed time to UART
-	  uart_buf_len = sprintf(uart_buf, "Duration: %u ms\r\n", timer_val/10); // /10 for ms
-      HAL_UART_Transmit(&huart1, (uint8_t *)uart_buf, uart_buf_len, 100);
-
-
-
+		  timer_val = __HAL_TIM_GET_COUNTER(&htim16);
+	  }
   }
   /* USER CODE END 3 */
 }
