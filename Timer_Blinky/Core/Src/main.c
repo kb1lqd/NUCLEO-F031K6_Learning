@@ -71,9 +71,13 @@ static void MX_TIM2_Init(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
+	// UART
 	char uart_buf[50];
 	int uart_buf_len;
 	uint16_t timer_val;
+
+	// Test
+	unsigned char test_count = 0;
 
   /* USER CODE END 1 */
 
@@ -113,11 +117,11 @@ int main(void)
 
 
   // Say hello
-  uart_buf_len = sprintf(uart_buf, "Timer blinky program started!\r\n");
+  uart_buf_len = sprintf(uart_buf, "Timer interrupt blinky program started!\r\n");
   HAL_UART_Transmit(&huart1, (uint8_t *)uart_buf, uart_buf_len, 100);
 
   //Start the timer
-  HAL_TIM_Base_Start(&htim16);
+  HAL_TIM_Base_Start_IT(&htim16);
 
   /* USER CODE END 2 */
 
@@ -126,20 +130,18 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
+	  // Transmit counter value over UART
+	  uart_buf_len = sprintf(uart_buf, "While Loop Count= %u\r\n", test_count);
+	  HAL_UART_Transmit(&huart1, (uint8_t *)uart_buf, uart_buf_len, 100);
+
+	  //Increment counter
+	  test_count += 1;
+
+	  //Delay
+	  HAL_Delay(3*1000); //3 seconds
+
 
     /* USER CODE BEGIN 3 */
-
-	  if(__HAL_TIM_GET_COUNTER(&htim16) - timer_val >= 500)
-	  {
-		  //Toggle  LED
-		  HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_3);
-
-		  //Print elapsed time to UART
-		  uart_buf_len = sprintf(uart_buf, "Duration: %u ms\r\n", (__HAL_TIM_GET_COUNTER(&htim16) - timer_val)/10); // /10 for ms
-		  HAL_UART_Transmit(&huart1, (uint8_t *)uart_buf, uart_buf_len, 100);
-
-		  timer_val = __HAL_TIM_GET_COUNTER(&htim16);
-	  }
   }
   /* USER CODE END 3 */
 }
@@ -248,7 +250,7 @@ static void MX_TIM16_Init(void)
   htim16.Instance = TIM16;
   htim16.Init.Prescaler = 800-1;
   htim16.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim16.Init.Period = 65535;
+  htim16.Init.Period = 10000-1;
   htim16.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim16.Init.RepetitionCounter = 0;
   htim16.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
@@ -324,6 +326,14 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef * htim)
+{
+	// Check which version of the time triggered this callback then perform desired interrupt action
+	if(htim == &htim16)
+	{
+		HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_3);
+	}
+}
 
 /* USER CODE END 4 */
 
