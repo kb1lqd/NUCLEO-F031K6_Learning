@@ -35,34 +35,34 @@ $(wildcard ../makefile.init) \
 $(wildcard ../makefile.targets) \
 
 
-BUILD_ARTIFACT_NAME := Timer_PWM
+BUILD_ARTIFACT_NAME := LCD_Driver
 BUILD_ARTIFACT_EXTENSION := elf
 BUILD_ARTIFACT_PREFIX := 
 BUILD_ARTIFACT := $(BUILD_ARTIFACT_PREFIX)$(BUILD_ARTIFACT_NAME).$(BUILD_ARTIFACT_EXTENSION)
 
 # Add inputs and outputs from these tool invocations to the build variables 
 EXECUTABLES += \
-Timer_PWM.elf \
+LCD_Driver.elf \
 
 SIZE_OUTPUT += \
 default.size.stdout \
 
 OBJDUMP_LIST += \
-Timer_PWM.list \
+LCD_Driver.list \
 
 OBJCOPY_BIN += \
-Timer_PWM.bin \
+LCD_Driver.bin \
 
 
 # All Target
 all: main-build
 
 # Main-build Target
-main-build: Timer_PWM.elf secondary-outputs
+main-build: LCD_Driver.elf secondary-outputs
 
 # Tool invocations
-Timer_PWM.elf: $(OBJS) $(USER_OBJS) C:\Users\KB1LQ\Documents\git\NUCLEO-F031K6_Learning\Timer_PWM\STM32F031K6TX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "Timer_PWM.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m0 -T"C:\Users\KB1LQ\Documents\git\NUCLEO-F031K6_Learning\Timer_PWM\STM32F031K6TX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Timer_PWM.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+LCD_Driver.elf: $(OBJS) $(USER_OBJS) C:\Users\KB1LQ\Documents\git\NUCLEO-F031K6_Learning\LCD_Driver\STM32F031K6TX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "LCD_Driver.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m0 -T"C:\Users\KB1LQ\Documents\git\NUCLEO-F031K6_Learning\LCD_Driver\STM32F031K6TX_FLASH.ld" --specs=nosys.specs -Wl,-Map="LCD_Driver.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
@@ -71,13 +71,13 @@ default.size.stdout: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
 	@echo 'Finished building: $@'
 	@echo ' '
 
-Timer_PWM.list: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-objdump -h -S $(EXECUTABLES) > "Timer_PWM.list"
+LCD_Driver.list: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-objdump -h -S $(EXECUTABLES) > "LCD_Driver.list"
 	@echo 'Finished building: $@'
 	@echo ' '
 
-Timer_PWM.bin: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-objcopy  -O binary $(EXECUTABLES) "Timer_PWM.bin"
+LCD_Driver.bin: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-objcopy  -O binary $(EXECUTABLES) "LCD_Driver.bin"
 	@echo 'Finished building: $@'
 	@echo ' '
 

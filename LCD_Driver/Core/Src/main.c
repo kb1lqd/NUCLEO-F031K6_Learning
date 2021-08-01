@@ -40,6 +40,8 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
+TIM_HandleTypeDef htim2;
+
 UART_HandleTypeDef huart1;
 
 /* USER CODE BEGIN PV */
@@ -50,7 +52,12 @@ UART_HandleTypeDef huart1;
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_USART1_UART_Init(void);
+static void MX_TIM2_Init(void);
 /* USER CODE BEGIN PFP */
+
+void LcdContrast(unsigned char contrast_percent);
+void LcdInit(void);
+void LcdWriteCmd(unsigned char DB7, unsigned char DB6, unsigned char DB5, unsigned char DB4, unsigned char DB3, unsigned char DB2, unsigned char DB1, unsigned char DB0);
 
 /* USER CODE END PFP */
 
@@ -71,11 +78,6 @@ int main(void)
 	int uart_buf_len;
 	uint16_t timer_val;
 
-	// Test
-	unsigned char pwm_val;
-	unsigned char pwm_set=0;
-	unsigned char pwm_dir=1;
-	unsigned char pwm_step=5;
 
   /* USER CODE END 1 */
 
@@ -98,7 +100,15 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_USART1_UART_Init();
+  MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
+
+  //Initialize LCD
+  LcdInit();
+
+  // Start PWM for LCD Contrast
+  LcdContrast(150);
+  HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1);
 
   /* Timer 2
    * - Set to 1Mhz (1cnt/us)
@@ -113,14 +123,8 @@ int main(void)
 
 
   // Say hello
-  uart_buf_len = sprintf(uart_buf, "Timer onboard PWM LED program started!\r\n");
+  uart_buf_len = sprintf(uart_buf, "LCD driver test program started!\r\n");
   HAL_UART_Transmit(&huart1, (uint8_t *)uart_buf, uart_buf_len, 100);
-
-  //Start the timer
-  HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_2);
-
-  //Change PWM duty cycle
-  //__HAL_TIM_SET_COMPARE(&htim2,TIM_CHANNEL_2,128);
 
   /* USER CODE END 2 */
 
@@ -132,39 +136,9 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
 
-	//Get PWM CCR value
-	pwm_val = __HAL_TIM_GET_COMPARE(&htim2,TIM_CHANNEL_2);
 
-    //Send PWM value over UART
-    uart_buf_len = sprintf(uart_buf, "PWM CCR= %u\r\n", pwm_val);
-    HAL_UART_Transmit(&huart1, (uint8_t *)uart_buf, uart_buf_len, 100);
 
-    //Change PWM duty cycle
-    if(pwm_set+pwm_step>=255)
-    {
-    	pwm_dir=0;
-    }
-    else if(pwm_set-pwm_step<=0)
-    {
-    	pwm_dir=1;
-    }
-    else
-    {
-    	//None
-    }
 
-    if(pwm_dir==1)
-    {
-    	pwm_set+=pwm_step;
-    }
-    else
-    {
-    	pwm_set-=pwm_step;
-    }
-
-    __HAL_TIM_SET_COMPARE(&htim2,TIM_CHANNEL_2,pwm_set);
-
-    HAL_Delay(10); //10ms delay
   }
   /* USER CODE END 3 */
 }
@@ -208,6 +182,65 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
+}
+
+/**
+  * @brief TIM2 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_TIM2_Init(void)
+{
+
+  /* USER CODE BEGIN TIM2_Init 0 */
+
+  /* USER CODE END TIM2_Init 0 */
+
+  TIM_ClockConfigTypeDef sClockSourceConfig = {0};
+  TIM_MasterConfigTypeDef sMasterConfig = {0};
+  TIM_OC_InitTypeDef sConfigOC = {0};
+
+  /* USER CODE BEGIN TIM2_Init 1 */
+
+  /* USER CODE END TIM2_Init 1 */
+  htim2.Instance = TIM2;
+  htim2.Init.Prescaler = 8-1;
+  htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim2.Init.Period = 255;
+  htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+  htim2.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_ENABLE;
+  if (HAL_TIM_Base_Init(&htim2) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
+  if (HAL_TIM_ConfigClockSource(&htim2, &sClockSourceConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  if (HAL_TIM_PWM_Init(&htim2) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
+  sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+  if (HAL_TIMEx_MasterConfigSynchronization(&htim2, &sMasterConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sConfigOC.OCMode = TIM_OCMODE_PWM1;
+  sConfigOC.Pulse = 128;
+  sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
+  sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
+  if (HAL_TIM_PWM_ConfigChannel(&htim2, &sConfigOC, TIM_CHANNEL_1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN TIM2_Init 2 */
+
+  /* USER CODE END TIM2_Init 2 */
+  HAL_TIM_MspPostInit(&htim2);
+
 }
 
 /**
@@ -285,6 +318,59 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
+
+void LcdContrast(unsigned char contrast_percent)
+{
+	//TO-DO: This should be upgraded to a percentage input using fixed point math
+	__HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1,contrast_percent);
+}
+
+void LcdInit(void)
+{
+	/*
+	 * Generic data transmission to LCD
+	 */
+
+	//
+	// Clear Display
+	//
+
+	//Enable HIGH
+	HAL_GPIO_WritePin(LCD_EN_GPIO_Port, LCD_EN_Pin, 1);
+
+	//Set DBx data 4-MSB
+	HAL_GPIO_WritePin(LCD_DB7_GPIO_Port, LCD_DB7_Pin, 0);
+	HAL_GPIO_WritePin(LCD_DB6_GPIO_Port, LCD_DB6_Pin, 0);
+	HAL_GPIO_WritePin(LCD_DB5_GPIO_Port, LCD_DB5_Pin, 0);
+	HAL_GPIO_WritePin(LCD_DB4_GPIO_Port, LCD_DB4_Pin, 0);
+
+	//Enable LOW
+	HAL_GPIO_WritePin(LCD_EN_GPIO_Port, LCD_EN_Pin, 0);
+
+	//Delay
+	HAL_Delay(5); //5ms Delay
+
+	//Enable HIGH
+	HAL_GPIO_WritePin(LCD_EN_GPIO_Port, LCD_EN_Pin, 1);
+
+	//Set DBx data 4-LSB
+	HAL_GPIO_WritePin(LCD_DB7_GPIO_Port, LCD_DB7_Pin, 0);
+	HAL_GPIO_WritePin(LCD_DB6_GPIO_Port, LCD_DB6_Pin, 0);
+	HAL_GPIO_WritePin(LCD_DB5_GPIO_Port, LCD_DB5_Pin, 0);
+	HAL_GPIO_WritePin(LCD_DB4_GPIO_Port, LCD_DB4_Pin, 1);
+
+	//Enabled LOW
+	HAL_GPIO_WritePin(LCD_EN_GPIO_Port, LCD_EN_Pin, 0);
+
+	//Delay
+	HAL_Delay(5); //5ms Delay
+
+}
+
+void LcdWriteCmd(unsigned char DB7, unsigned char DB6, unsigned char DB5, unsigned char DB4, unsigned char DB3, unsigned char DB2, unsigned char DB1, unsigned char DB0)
+{
+
+}
 
 
 /* USER CODE END 4 */
