@@ -75,7 +75,10 @@ int main(void)
 	uint16_t timer_val;
 
 	// Test
-	unsigned char test_count = 0;
+	unsigned char pwm_val;
+	unsigned char pwm_set=0;
+	unsigned char pwm_dir=1;
+	unsigned char pwm_step=5;
 
   /* USER CODE END 1 */
 
@@ -121,7 +124,7 @@ int main(void)
   HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_2);
 
   //Change PWM duty cycle
-  __HAL_TIM_SET_COMPARE(&htim2,TIM_CHANNEL_2,128);
+  //__HAL_TIM_SET_COMPARE(&htim2,TIM_CHANNEL_2,128);
 
   /* USER CODE END 2 */
 
@@ -132,6 +135,40 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+
+	//Get PWM CCR value
+	pwm_val = __HAL_TIM_GET_COMPARE(&htim2,TIM_CHANNEL_2);
+
+    //Send PWM value over UART
+    uart_buf_len = sprintf(uart_buf, "PWM CCR= %u\r\n", pwm_val);
+    HAL_UART_Transmit(&huart1, (uint8_t *)uart_buf, uart_buf_len, 100);
+
+    //Change PWM duty cycle
+    if(pwm_set+pwm_step>=255)
+    {
+    	pwm_dir=0;
+    }
+    else if(pwm_set-pwm_step<=0)
+    {
+    	pwm_dir=1;
+    }
+    else
+    {
+    	//None
+    }
+
+    if(pwm_dir==1)
+    {
+    	pwm_set+=pwm_step;
+    }
+    else
+    {
+    	pwm_set-=pwm_step;
+    }
+
+    __HAL_TIM_SET_COMPARE(&htim2,TIM_CHANNEL_2,pwm_set);
+
+    HAL_Delay(10); //10ms delay
   }
   /* USER CODE END 3 */
 }
@@ -199,7 +236,7 @@ static void MX_TIM2_Init(void)
   htim2.Instance = TIM2;
   htim2.Init.Prescaler = 8-1;
   htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim2.Init.Period = 1027;
+  htim2.Init.Period = 255;
   htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim2.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_ENABLE;
   if (HAL_TIM_Base_Init(&htim2) != HAL_OK)
