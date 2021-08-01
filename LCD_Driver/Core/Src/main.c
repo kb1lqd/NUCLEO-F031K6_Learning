@@ -58,6 +58,8 @@ static void MX_TIM2_Init(void);
 void LcdContrast(unsigned char contrast_percent);
 void LcdInit(void);
 void LcdWriteCmd(unsigned char DB7, unsigned char DB6, unsigned char DB5, unsigned char DB4, unsigned char DB3, unsigned char DB2, unsigned char DB1, unsigned char DB0);
+void LcdWriteData(unsigned char DB7, unsigned char DB6, unsigned char DB5, unsigned char DB4, unsigned char DB3, unsigned char DB2, unsigned char DB1, unsigned char DB0);
+
 
 /* USER CODE END PFP */
 
@@ -107,7 +109,7 @@ int main(void)
   LcdInit();
 
   // Start PWM for LCD Contrast
-  LcdContrast(150);
+  LcdContrast(15); // Percentage from 255 max duty cycle
   HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1);
 
   /* Timer 2
@@ -365,10 +367,116 @@ void LcdInit(void)
 	//Delay
 	HAL_Delay(5); //5ms Delay
 
+	//Delay
+	HAL_Delay(50); //50ms Delay
+
+	//
+	// Return cursor to HOME
+	//
+	LcdWriteCmd(0,0,0,0,0,0,1,0);
+
+	//Delay
+	HAL_Delay(50); //50ms Delay
+
+	//
+	// Set cursor to blinking
+	//
+	LcdWriteCmd(0,0,0,0,1,1,1,1);
+
+	//Delay
+	HAL_Delay(50); //50ms Delay
+
+	//
+	// Write MACK to screen
+	//
+	LcdWriteData(0, 1, 0, 0, 1, 1, 0, 1);
+	HAL_Delay(50); //50ms Delay
+	LcdWriteData(0, 1, 0, 0, 0, 0, 0, 1);
+	HAL_Delay(50); //50ms Delay
+	LcdWriteData(0, 1, 0, 0, 0, 0, 1, 1);
+	HAL_Delay(50); //50ms Delay
+	LcdWriteData(0, 1, 0, 0, 1, 0, 1, 1);
+	HAL_Delay(50); //50ms Delay
+
+	//Delay
+	HAL_Delay(50); //50ms Delay
+
 }
 
 void LcdWriteCmd(unsigned char DB7, unsigned char DB6, unsigned char DB5, unsigned char DB4, unsigned char DB3, unsigned char DB2, unsigned char DB1, unsigned char DB0)
 {
+	//Enable HIGH
+	HAL_GPIO_WritePin(LCD_EN_GPIO_Port, LCD_EN_Pin, 1);
+
+	//Set DBx data 4-MSB
+	HAL_GPIO_WritePin(LCD_DB7_GPIO_Port, LCD_DB7_Pin, DB7);
+	HAL_GPIO_WritePin(LCD_DB6_GPIO_Port, LCD_DB6_Pin, DB6);
+	HAL_GPIO_WritePin(LCD_DB5_GPIO_Port, LCD_DB5_Pin, DB5);
+	HAL_GPIO_WritePin(LCD_DB4_GPIO_Port, LCD_DB4_Pin, DB4);
+
+	//Enable LOW
+	HAL_GPIO_WritePin(LCD_EN_GPIO_Port, LCD_EN_Pin, 0);
+
+	//Delay
+	HAL_Delay(5); //5ms Delay
+
+	//Enable HIGH
+	HAL_GPIO_WritePin(LCD_EN_GPIO_Port, LCD_EN_Pin, 1);
+
+	//Set DBx data 4-LSB
+	HAL_GPIO_WritePin(LCD_DB7_GPIO_Port, LCD_DB7_Pin, DB3);
+	HAL_GPIO_WritePin(LCD_DB6_GPIO_Port, LCD_DB6_Pin, DB2);
+	HAL_GPIO_WritePin(LCD_DB5_GPIO_Port, LCD_DB5_Pin, DB1);
+	HAL_GPIO_WritePin(LCD_DB4_GPIO_Port, LCD_DB4_Pin, DB0);
+
+	//Enabled LOW
+	HAL_GPIO_WritePin(LCD_EN_GPIO_Port, LCD_EN_Pin, 0);
+
+	//Delay
+	HAL_Delay(5); //5ms Delay
+
+}
+
+void LcdWriteData(unsigned char DB7, unsigned char DB6, unsigned char DB5, unsigned char DB4, unsigned char DB3, unsigned char DB2, unsigned char DB1, unsigned char DB0)
+{
+	//RS HIGH
+	HAL_GPIO_WritePin(LCD_RS_GPIO_Port, LCD_RS_Pin, 1);
+
+	//Enable HIGH
+	HAL_GPIO_WritePin(LCD_EN_GPIO_Port, LCD_EN_Pin, 1);
+
+	//Set DBx data 4-MSB
+	HAL_GPIO_WritePin(LCD_DB7_GPIO_Port, LCD_DB7_Pin, DB7);
+	HAL_GPIO_WritePin(LCD_DB6_GPIO_Port, LCD_DB6_Pin, DB6);
+	HAL_GPIO_WritePin(LCD_DB5_GPIO_Port, LCD_DB5_Pin, DB5);
+	HAL_GPIO_WritePin(LCD_DB4_GPIO_Port, LCD_DB4_Pin, DB4);
+
+	//Enable LOW
+	HAL_GPIO_WritePin(LCD_EN_GPIO_Port, LCD_EN_Pin, 0);
+
+	//Delay
+	HAL_Delay(5); //5ms Delay
+
+	//Enable HIGH
+	HAL_GPIO_WritePin(LCD_EN_GPIO_Port, LCD_EN_Pin, 1);
+
+	//Set DBx data 4-LSB
+	HAL_GPIO_WritePin(LCD_DB7_GPIO_Port, LCD_DB7_Pin, DB3);
+	HAL_GPIO_WritePin(LCD_DB6_GPIO_Port, LCD_DB6_Pin, DB2);
+	HAL_GPIO_WritePin(LCD_DB5_GPIO_Port, LCD_DB5_Pin, DB1);
+	HAL_GPIO_WritePin(LCD_DB4_GPIO_Port, LCD_DB4_Pin, DB0);
+
+	//Enabled LOW
+	HAL_GPIO_WritePin(LCD_EN_GPIO_Port, LCD_EN_Pin, 0);
+
+	//Delay
+	HAL_Delay(5); //5ms Delay
+
+	//RS LOW
+	HAL_GPIO_WritePin(LCD_RS_GPIO_Port, LCD_RS_Pin, 0);
+
+	//Delay
+	HAL_Delay(5); //5ms Delay
 
 }
 
