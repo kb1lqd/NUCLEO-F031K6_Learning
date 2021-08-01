@@ -35,34 +35,34 @@ $(wildcard ../makefile.init) \
 $(wildcard ../makefile.targets) \
 
 
-BUILD_ARTIFACT_NAME := Timer_Blinky
+BUILD_ARTIFACT_NAME := Timer_PWM
 BUILD_ARTIFACT_EXTENSION := elf
 BUILD_ARTIFACT_PREFIX := 
 BUILD_ARTIFACT := $(BUILD_ARTIFACT_PREFIX)$(BUILD_ARTIFACT_NAME).$(BUILD_ARTIFACT_EXTENSION)
 
 # Add inputs and outputs from these tool invocations to the build variables 
 EXECUTABLES += \
-Timer_Blinky.elf \
+Timer_PWM.elf \
 
 SIZE_OUTPUT += \
 default.size.stdout \
 
 OBJDUMP_LIST += \
-Timer_Blinky.list \
+Timer_PWM.list \
 
 OBJCOPY_BIN += \
-Timer_Blinky.bin \
+Timer_PWM.bin \
 
 
 # All Target
 all: main-build
 
 # Main-build Target
-main-build: Timer_Blinky.elf secondary-outputs
+main-build: Timer_PWM.elf secondary-outputs
 
 # Tool invocations
-Timer_Blinky.elf: $(OBJS) $(USER_OBJS) C:\Users\KB1LQ\Documents\git\NUCLEO-F031K6_Learning\Timer_Blinky\STM32F031K6TX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "Timer_Blinky.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m0 -T"C:\Users\KB1LQ\Documents\git\NUCLEO-F031K6_Learning\Timer_Blinky\STM32F031K6TX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Timer_Blinky.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Timer_PWM.elf: $(OBJS) $(USER_OBJS) C:\Users\KB1LQ\Documents\git\NUCLEO-F031K6_Learning\Timer_PWM\STM32F031K6TX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "Timer_PWM.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m0 -T"C:\Users\KB1LQ\Documents\git\NUCLEO-F031K6_Learning\Timer_PWM\STM32F031K6TX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Timer_PWM.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
@@ -71,13 +71,13 @@ default.size.stdout: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
 	@echo 'Finished building: $@'
 	@echo ' '
 
-Timer_Blinky.list: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-objdump -h -S $(EXECUTABLES) > "Timer_Blinky.list"
+Timer_PWM.list: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-objdump -h -S $(EXECUTABLES) > "Timer_PWM.list"
 	@echo 'Finished building: $@'
 	@echo ' '
 
-Timer_Blinky.bin: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-objcopy  -O binary $(EXECUTABLES) "Timer_Blinky.bin"
+Timer_PWM.bin: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-objcopy  -O binary $(EXECUTABLES) "Timer_PWM.bin"
 	@echo 'Finished building: $@'
 	@echo ' '
 
