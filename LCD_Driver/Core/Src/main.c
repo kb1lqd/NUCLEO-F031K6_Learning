@@ -123,7 +123,7 @@ int main(void)
 
   //Initialize LCD
   LcdInit();
-  LcdPrintString("testing strings.");
+  LcdPrintString("testing long strings.");
   //LcdWriteDataChar(' ');
   //LcdWriteDataChar('t');
   //LcdWriteDataChar('E');
@@ -356,6 +356,9 @@ void LcdInit(void)
 	//
 	LcdWriteCmd(0,0,0,0,0,0,0,1);
 
+	//Delay
+	HAL_Delay(5); //5ms Delay
+
 	//
 	// Return cursor to HOME
 	//
@@ -379,11 +382,17 @@ void LcdWriteCmd(unsigned char DB7, unsigned char DB6, unsigned char DB5, unsign
 	//Enable HIGH
 	HAL_GPIO_WritePin(LCD_EN_GPIO_Port, LCD_EN_Pin, 1);
 
+	//Delay
+	HAL_Delay(5); //5ms Delay
+
 	//Set DBx data 4-MSB
 	HAL_GPIO_WritePin(LCD_DB7_GPIO_Port, LCD_DB7_Pin, DB7);
 	HAL_GPIO_WritePin(LCD_DB6_GPIO_Port, LCD_DB6_Pin, DB6);
 	HAL_GPIO_WritePin(LCD_DB5_GPIO_Port, LCD_DB5_Pin, DB5);
 	HAL_GPIO_WritePin(LCD_DB4_GPIO_Port, LCD_DB4_Pin, DB4);
+
+	//Delay
+	HAL_Delay(5); //5ms Delay
 
 	//Enable LOW
 	HAL_GPIO_WritePin(LCD_EN_GPIO_Port, LCD_EN_Pin, 0);
@@ -394,11 +403,17 @@ void LcdWriteCmd(unsigned char DB7, unsigned char DB6, unsigned char DB5, unsign
 	//Enable HIGH
 	HAL_GPIO_WritePin(LCD_EN_GPIO_Port, LCD_EN_Pin, 1);
 
+	//Delay
+	HAL_Delay(5); //5ms Delay
+
 	//Set DBx data 4-LSB
 	HAL_GPIO_WritePin(LCD_DB7_GPIO_Port, LCD_DB7_Pin, DB3);
 	HAL_GPIO_WritePin(LCD_DB6_GPIO_Port, LCD_DB6_Pin, DB2);
 	HAL_GPIO_WritePin(LCD_DB5_GPIO_Port, LCD_DB5_Pin, DB1);
 	HAL_GPIO_WritePin(LCD_DB4_GPIO_Port, LCD_DB4_Pin, DB0);
+
+	//Delay
+	HAL_Delay(5); //5ms Delay
 
 	//Enabled LOW
 	HAL_GPIO_WritePin(LCD_EN_GPIO_Port, LCD_EN_Pin, 0);
@@ -457,6 +472,9 @@ void LcdWriteDataChar(uint8_t byte)
 	//RS HIGH
 	HAL_GPIO_WritePin(LCD_RS_GPIO_Port, LCD_RS_Pin, 1);
 
+	//Delay
+	HAL_Delay(1); //1ms Delay
+
 	//Enable HIGH
 	HAL_GPIO_WritePin(LCD_EN_GPIO_Port, LCD_EN_Pin, 1);
 
@@ -466,11 +484,14 @@ void LcdWriteDataChar(uint8_t byte)
 	HAL_GPIO_WritePin(LCD_DB5_GPIO_Port, LCD_DB5_Pin, ((BIT5&byte)>>5));
 	HAL_GPIO_WritePin(LCD_DB4_GPIO_Port, LCD_DB4_Pin, ((BIT4&byte)>>4));
 
+	//Delay
+	HAL_Delay(1); //1ms Delay
+
 	//Enable LOW
 	HAL_GPIO_WritePin(LCD_EN_GPIO_Port, LCD_EN_Pin, 0);
 
 	//Delay
-	HAL_Delay(5); //5ms Delay
+	HAL_Delay(1); //1ms Delay
 
 	//Enable HIGH
 	HAL_GPIO_WritePin(LCD_EN_GPIO_Port, LCD_EN_Pin, 1);
@@ -481,17 +502,20 @@ void LcdWriteDataChar(uint8_t byte)
 	HAL_GPIO_WritePin(LCD_DB5_GPIO_Port, LCD_DB5_Pin, ((BIT1&byte)>>1));
 	HAL_GPIO_WritePin(LCD_DB4_GPIO_Port, LCD_DB4_Pin, ((BIT0&byte)>>0));
 
+	//Delay
+	HAL_Delay(1); //1ms Delay
+
 	//Enabled LOW
 	HAL_GPIO_WritePin(LCD_EN_GPIO_Port, LCD_EN_Pin, 0);
 
 	//Delay
-	HAL_Delay(5); //5ms Delay
+	HAL_Delay(1); //1ms Delay
 
 	//RS LOW
 	HAL_GPIO_WritePin(LCD_RS_GPIO_Port, LCD_RS_Pin, 0);
 
 	//Delay
-	HAL_Delay(5); //5ms Delay
+	HAL_Delay(1); //1ms Delay
 
 }
 
